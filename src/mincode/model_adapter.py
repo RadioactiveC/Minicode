@@ -52,7 +52,11 @@ class MiniMindClient:
     model: str = "minimind"
     timeout: int = 120
     temperature: float = 0.7
-    max_tokens: int = 512
+    # NOTE: MiniMind API uses max_tokens for BOTH prompt truncation ([-max_tokens:] on the
+    # prompt string) AND generation limit (max_length = prompt_len + max_tokens). So this
+    # value must be large enough to not truncate the prompt, but not so large that CPU
+    # inference takes forever. 4096 is a good compromise.
+    max_tokens: int = 4096
     _client: Any = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -76,12 +80,13 @@ class MiniMindClient:
         """Send a completion request and return one assistant message dict."""
         from openai import APIConnectionError, APIError, APITimeoutError
 
-        # Build request kwargs
+        # Build request kwargs — stream=False is critical because MiniMind defaults to stream=True
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
+            "stream": False,
         }
         # Only pass tools if we have them — MiniMind API accepts tools parameter
         if tools:

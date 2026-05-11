@@ -138,7 +138,7 @@ def main(
     max_steps: Annotated[int, typer.Option(help="Max agent loop steps.")] = 20,
     timeout: Annotated[int, typer.Option(help="Request timeout (seconds).")] = 120,
     temperature: Annotated[float, typer.Option(help="Sampling temperature.")] = 0.7,
-    max_tokens: Annotated[int, typer.Option(help="Max tokens per response.")] = 512,
+    max_tokens: Annotated[int, typer.Option(help="Max tokens (also controls prompt truncation in MiniMind API).")] = 4096,
     cwd: Annotated[str, typer.Option(help="Workspace directory.")] = "",
     yolo: Annotated[bool, typer.Option("--yolo", help="Auto-approve all mutating operations.")] = False,
     version: Annotated[

@@ -215,18 +215,20 @@ def _exec_command(ctx: ToolContext, args: dict[str, Any]) -> str:
 
 
 def create_default_tools(context: ToolContext) -> ToolRegistry:
-    """Build the 6 built-in coding tools."""
+    """Build the 6 built-in coding tools.
+
+    Tool descriptions and schemas are kept minimal to fit within MiniMind's
+    limited context window (~768 tokens at SFT training time).
+    """
     registry = ToolRegistry(context)
 
     registry.register(Tool(
         name="list_files",
-        description="List files and directories. Returns one entry per line; directories have trailing /.",
+        description="列出目录中的文件和子目录",
         parameters={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "Path to list (default: workspace root)."},
-                "recursive": {"type": "boolean", "description": "List recursively (default: true)."},
-                "max_entries": {"type": "integer", "description": "Max entries to return (default: 200)."},
+                "path": {"type": "string", "description": "目录路径"},
             },
             "required": [],
         },
@@ -235,13 +237,11 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
 
     registry.register(Tool(
         name="read_file",
-        description="Read file contents with line numbers. Use start_line/num_lines for large files.",
+        description="读取文件内容",
         parameters={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "File path to read."},
-                "start_line": {"type": "integer", "description": "Start line (1-based, default: 1)."},
-                "num_lines": {"type": "integer", "description": "Lines to read (default: 200, max: 2000)."},
+                "path": {"type": "string", "description": "文件路径"},
             },
             "required": ["path"],
         },
@@ -250,13 +250,12 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
 
     registry.register(Tool(
         name="grep_files",
-        description="Search for a text pattern across files. Output: file:line_number:matching_line.",
+        description="在文件中搜索文本",
         parameters={
             "type": "object",
             "properties": {
-                "pattern": {"type": "string", "description": "Text pattern to search for."},
-                "path": {"type": "string", "description": "Directory to search in (default: workspace root)."},
-                "max_results": {"type": "integer", "description": "Max matching lines (default: 200)."},
+                "pattern": {"type": "string", "description": "搜索文本"},
+                "path": {"type": "string", "description": "搜索目录"},
             },
             "required": ["pattern"],
         },
@@ -265,13 +264,12 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
 
     registry.register(Tool(
         name="write_file",
-        description="Write content to a file. Creates parent directories automatically.",
+        description="写入文件内容",
         parameters={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "File path to write."},
-                "content": {"type": "string", "description": "Content to write."},
-                "mode": {"type": "string", "enum": ["overwrite", "append"], "description": "Write mode (default: overwrite)."},
+                "path": {"type": "string", "description": "文件路径"},
+                "content": {"type": "string", "description": "写入内容"},
             },
             "required": ["path", "content"],
         },
@@ -281,13 +279,13 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
 
     registry.register(Tool(
         name="replace_in_file",
-        description="Replace exact text in a file. Always read_file first to see current content.",
+        description="替换文件中的文本",
         parameters={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "File path to edit."},
-                "old": {"type": "string", "description": "Exact text to find (must match including whitespace)."},
-                "new": {"type": "string", "description": "Replacement text."},
+                "path": {"type": "string", "description": "文件路径"},
+                "old": {"type": "string", "description": "要替换的原文"},
+                "new": {"type": "string", "description": "替换后的文本"},
             },
             "required": ["path", "old", "new"],
         },
@@ -297,12 +295,11 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
 
     registry.register(Tool(
         name="exec_command",
-        description="Execute a shell command. Use for git, tests, builds — not for file reading or searching.",
+        description="执行Shell命令",
         parameters={
             "type": "object",
             "properties": {
-                "command": {"type": "string", "description": "Shell command to execute."},
-                "timeout_sec": {"type": "integer", "description": "Timeout in seconds (default: 120, max: 600)."},
+                "command": {"type": "string", "description": "命令"},
             },
             "required": ["command"],
         },
