@@ -1,0 +1,358 @@
+{
+  "model": "LoRA-merged (mincode_v1)",
+  "weight": "/Users/henry/Desktop/mini-mind/mincode/out/mincode_v1_768.pth",
+  "summary": {
+    "total": 40,
+    "passed": 25,
+    "accuracy": 62.5,
+    "by_category": {
+      "list_files": {
+        "passed": 5,
+        "total": 8,
+        "accuracy": 62.5
+      },
+      "read_file": {
+        "passed": 5,
+        "total": 8,
+        "accuracy": 62.5
+      },
+      "write_file": {
+        "passed": 6,
+        "total": 8,
+        "accuracy": 75.0
+      },
+      "no_tool": {
+        "passed": 6,
+        "total": 8,
+        "accuracy": 75.0
+      },
+      "edge": {
+        "passed": 3,
+        "total": 8,
+        "accuracy": 37.5
+      }
+    }
+  },
+  "cases": [
+    {
+      "prompt": "看看models目录下有哪些文件",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"models\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"models\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "展示一下assets文件夹的内容",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"assets\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"assets\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "What's inside the templates directory?",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": false,
+      "details": "wrong: no tool call (expected list_files)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"script_files\", \"content\": \"import pandas as pd\\nimport numpy as np\\n\\n# Load the numpy array\\nfile_path = pd.read_csv('/path/to/your/file.csv')\\n\\n# Display the first few rows to understand the structure\\nprint(\\\"First 5 rows:\\\")\\nprint(file_path.head())\\nprint(\\\"\\\\nData types:\\\")\\nprint(np.array(file_path))\\nprint(\\\"\\\\nFirst 5 rows:\\\")\\nprint(np.array(file_path))\\nprint(\\\"\\\\nData types:\\\")\\nprint(np.array(file_path))\\nprint(\\\"\\\\nFirst 5 rows:\\\")\\nprint(np.array(file_path))\\nprint(\\"
+    },
+    {
+      "prompt": "migrations目录有什么东西",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": false,
+      "details": "wrong tool: write_file (expected list_files)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"migrations/\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "List the contents of the build folder",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"list_files\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"list_files\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "看看static目录里都有啥",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"static\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"static\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我查看下vendor目录的结构",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": false,
+      "details": "wrong tool: write_file (expected list_files)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"vendor_dir\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Show me what's in the examples folder",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"example_files\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"example_files\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "打开server.py看看代码",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"server.py\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"server.py\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我读一下Makefile",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"Makefile\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"Makefile\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Read the LICENSE file",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"LICENSE\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"LICENSE\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "看看setup.cfg里面配置了什么",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"setup.cfg\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我查看docker-compose.yml",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"docker-compose.yml\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"docker-compose.yml\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Show me the content of database.py",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"database.py\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "CHANGELOG.md里写了什么",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \".md\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Open the .env.example file",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \".env.example\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \".env.example\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我创建一个calculator.py，实现加减乘除",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"calculator.py\", \"content\": \"# Calculator.py\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"calculator.py\", \"content\": \"# Calculator.py\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "写一个requirements.txt，包含flask和requests",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"requirements.txt\", \"content\": \"flask, requests\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"requirements.txt\", \"content\": \"flask, requests\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Create a simple HTML index page",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"simple_index_page\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"simple_index_page\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我生成一个.env文件，配置数据库连接",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong: no tool call (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \".env\", \"content\": \"# 数据库连接配置\\n\\n# 数据库连接信息\\n\\n# 数据库名称\\n 用户名: example_user\\n 密码: example_password\\n 密码: example_password\\n 主机: example_host\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example_port\\n 端口: example"
+    },
+    {
+      "prompt": "创建一个deploy.sh部署脚本",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"deploy.sh\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"deploy.sh\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Write a conftest.py with a sample fixture",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong: no tool call (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"conftest.py\", \"content\": \"import pandas as pd\\nimport numpy as np\\n\\n# Load the dataset\\nfile_path = '/path/to/your/dataset'\\n\\n# Create a sample fixture\\nfixture = pd.read_csv(file_path)\\n\\n# Display the first few rows to understand the structure\\nprint(\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows:\\\")\\nprint(f\\\"First 5 rows"
+    },
+    {
+      "prompt": "帮我写一个logging的配置文件logging.yaml",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"logging\", \"content\": \"<!DOCTYPE html>\\n<html>\\n<he)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"logging\", \"content\": \"<!DOCTYPE html>\\n<html>\\n<head>\\n<title>配置文件</title>\\n</head>\\n<body>\\n<h1>配置文件</h1>\\n</body>\\n</html>\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Create a docker-compose.yml for postgres and redis",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"docker-compose.yml\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"docker-compose.yml\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Python中lambda表达式怎么用？",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": false,
+      "details": "wrong: called ['read_file'] (expected none)",
+      "raw_response": "lambda表达式是lambda表达式的一种简化形式，它接受一个参数，返回一个匿名函数。\n<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"lambda\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "嗨，你能做什么？",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "当然可以！我来帮你写一个列表，包含一些关键词，方便你快速查找。"
+    },
+    {
+      "prompt": "What is the difference between a tuple and a list?",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "The main difference is in the order of a tuple and list. A tuple is a tuple with two elements: a and b. List is a list, and a tuple is a tuple with two elements: a and b."
+    },
+    {
+      "prompt": "如何理解面向对象编程？",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "面向对象编程是一种编程范式，它使用“对象”来设计软件。对象是数据和行为的封装，具有独立的属性和方法。通过定义对象，可以实现代码的复用和模块化。"
+    },
+    {
+      "prompt": "Explain async/await in Python",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": ""
+    },
+    {
+      "prompt": "再见",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": false,
+      "details": "wrong: called ['read_file'] (expected none)",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"再见\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "数据库索引是什么原理",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "数据库索引是数据库管理系统的核心功能，它决定了数据库中数据的操作。当创建索引时，数据库会自动分配索引，并将数据插入到索引中。索引是数据库中最重要的功能之一，它决定了数据库的性能和可用性。"
+    },
+    {
+      "prompt": "How does garbage collection work in Python?",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "Garbage collection works by using the built-in `collections.deque` for dynamic memory allocation. The `deque` is a dynamic memory allocator that allows you to allocate memory for a single point of failure."
+    },
+    {
+      "prompt": "看看有没有叫api的目录",
+      "expect_tool": "list_files",
+      "category": "edge",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"api\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"api\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "能看下那个json配置文件吗",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"json\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"json\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我弄一个Python脚本处理CSV数据",
+      "expect_tool": "write_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: read_file (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"CSV\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "这个项目有单元测试吗",
+      "expect_tool": "list_files",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: read_file (expected list_files)",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"scripts\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Check if there's a Dockerfile in the project",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"Dockerfile\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我把错误日志格式改一下写到新文件里",
+      "expect_tool": "write_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: read_file (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"new_file.txt\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "models下面的user.py怎么写的",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"models\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "生成一个空的__init__.py",
+      "expect_tool": "write_file",
+      "category": "edge",
+      "passed": true,
+      "details": "correct: write_file({\"path\": \"__init__.py\", \"content\": \"# 创建一个__init__.py 对象。\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"__init__.py\", \"content\": \"# 创建一个__init__.py 对象。\"}}\n</tool_call>"
+    }
+  ]
+}
