@@ -1,7 +1,8 @@
-"""Start MiniMind API server with CPU-compatible settings.
+"""Start MiniMind API server with MinCode's LoRA-merged weights.
 
-This wrapper patches the model loading to use float32 on CPU
-(the original serve_openai_api.py uses .half() which only works on CUDA).
+Usage:
+    python scripts/start_minimind_server.py                      # use mincode_sft weights
+    python scripts/start_minimind_server.py --weight full_sft    # use base weights (for comparison)
 """
 
 import sys
@@ -10,39 +11,44 @@ import argparse
 
 import torch
 
-# Add minimind to path
 MINIMIND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../minimind"))
+PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, MINIMIND_DIR)
-os.chdir(os.path.join(MINIMIND_DIR, "scripts"))
 
-import uvicorn
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer
+from model.model_minimind import MiniMindConfig, MiniMindForCausalLM
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Start MiniMind API server (CPU-friendly)")
-    parser.add_argument("--load_from", default="jingyaogong/minimind-3", type=str,
-                        help="HuggingFace model name or local path")
+    parser = argparse.ArgumentParser(description="Start MiniMind API server for MinCode")
+    parser.add_argument("--weight", default="mincode_sft", type=str,
+                        help="Weight name: mincode_sft (LoRA-merged) or full_sft (base)")
     parser.add_argument("--port", default=8998, type=int)
-    parser.add_argument("--device", default="cpu", type=str)
     args = parser.parse_args()
 
-    device = args.device
-    print(f"Loading model from {args.load_from}...")
-    tokenizer = AutoTokenizer.from_pretrained(args.load_from, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(args.load_from, trust_remote_code=True)
-    param_count = sum(p.numel() for p in model.parameters()) / 1e6
-    print(f"Model loaded: {param_count:.2f}M parameters")
-
-    # Use float32 on CPU, half on CUDA
-    if device == "cpu":
-        model = model.float().eval()
+    # Determine weight path
+    if args.weight == "full_sft":
+        weight_path = os.path.join(MINIMIND_DIR, "out", "full_sft_768.pth")
     else:
-        model = model.half().eval().to(device)
+        weight_path = os.path.join(PROJECT_DIR, "out", f"{args.weight}_768.pth")
 
-    print(f"Device: {device}, dtype: {next(model.parameters()).dtype}")
+    device = "cpu"
+    print(f"Loading model: {args.weight}")
+    print(f"Weight path: {weight_path}")
 
-    # Import the FastAPI app via importlib (serve_openai_api uses __package__ hack)
+    # Load tokenizer + model
+    tokenizer = AutoTokenizer.from_pretrained(os.path.join(MINIMIND_DIR, "model"))
+    lm_config = MiniMindConfig(hidden_size=768, num_hidden_layers=8, use_moe=False)
+    model = MiniMindForCausalLM(lm_config)
+    model.load_state_dict(torch.load(weight_path, map_location=device), strict=False)
+    model = model.float().eval()
+
+    param_count = sum(p.numel() for p in model.parameters()) / 1e6
+    print(f"Model loaded: {param_count:.2f}M parameters, device={device}")
+
+    # Import and configure the FastAPI app from serve_openai_api.py
+    os.chdir(os.path.join(MINIMIND_DIR, "scripts"))
+
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         "serve_openai_api",
@@ -50,20 +56,19 @@ def main():
     )
     server_module = importlib.util.module_from_spec(spec)
 
-    # Pre-inject globals so the module doesn't try to parse args and init_model on import
+    # Inject model/tokenizer/device before exec to skip __main__ block
     server_module.model = model
     server_module.tokenizer = tokenizer
     server_module.device = device
-
-    # Block the __main__ guard from executing
     server_module.__name__ = "serve_openai_api"
     spec.loader.exec_module(server_module)
 
-    # Now inject again (exec_module may have overwritten)
+    # Re-inject after exec (module init may overwrite)
     server_module.model = model
     server_module.tokenizer = tokenizer
     server_module.device = device
 
+    import uvicorn
     print(f"Starting server on port {args.port}...")
     uvicorn.run(server_module.app, host="0.0.0.0", port=args.port)
 

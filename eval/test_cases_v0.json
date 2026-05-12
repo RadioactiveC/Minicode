@@ -1,0 +1,17 @@
+[
+  {"prompt": "看看当前目录有什么文件", "expect_tool": "list_files", "category": "list_files"},
+  {"prompt": "列出src目录下的内容", "expect_tool": "list_files", "category": "list_files"},
+  {"prompt": "Show me the project structure", "expect_tool": "list_files", "category": "list_files"},
+  {"prompt": "读一下README.md", "expect_tool": "read_file", "category": "read_file"},
+  {"prompt": "帮我看看main.py里写了什么", "expect_tool": "read_file", "category": "read_file"},
+  {"prompt": "Read the config.yaml file", "expect_tool": "read_file", "category": "read_file"},
+  {"prompt": "帮我创建一个hello.py，里面打印hello world", "expect_tool": "write_file", "category": "write_file"},
+  {"prompt": "写一个简单的README", "expect_tool": "write_file", "category": "write_file"},
+  {"prompt": "Create a .gitignore for Python", "expect_tool": "write_file", "category": "write_file"},
+  {"prompt": "什么是Python的装饰器？", "expect_tool": null, "category": "no_tool"},
+  {"prompt": "你好", "expect_tool": null, "category": "no_tool"},
+  {"prompt": "How to use a list comprehension?", "expect_tool": null, "category": "no_tool"},
+  {"prompt": "看下config目录", "expect_tool": "list_files", "category": "edge"},
+  {"prompt": "帮我看看不存在的文件abc.txt", "expect_tool": "read_file", "category": "edge"},
+  {"prompt": "requirements.txt里有哪些依赖？", "expect_tool": "read_file", "category": "edge"}
+]

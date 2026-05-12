@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -155,67 +153,11 @@ def _write_file(ctx: ToolContext, args: dict[str, Any]) -> str:
     return f"wrote {len(content)} bytes to {path.relative_to(ctx.cwd)} ({mode})"
 
 
-def _replace_in_file(ctx: ToolContext, args: dict[str, Any]) -> str:
-    raw_path = str(args["path"])
-    old = str(args["old"])
-    new = str(args["new"])
-    path = ctx.resolve_path(raw_path)
-    if not path.exists() or not path.is_file():
-        return f"file not found: {path}"
-    content = path.read_text(encoding="utf-8", errors="replace")
-    if old not in content:
-        return "no match found — old text does not exist in file"
-    path.write_text(content.replace(old, new, 1), encoding="utf-8")
-    return f"replaced in {path.relative_to(ctx.cwd)}"
-
-
-def _grep_files(ctx: ToolContext, args: dict[str, Any]) -> str:
-    pattern = str(args["pattern"])
-    raw_path = str(args.get("path", "."))
-    max_results = max(1, min(int(args.get("max_results", 200)), 2000))
-    root = ctx.resolve_path(raw_path)
-
-    if shutil.which("rg"):
-        cmd = ["rg", "--line-number", "--no-heading", pattern, str(root)]
-        proc = subprocess.run(cmd, cwd=ctx.cwd, capture_output=True, text=True, check=False)
-        if proc.returncode not in (0, 1):
-            return f"rg failed: {proc.stderr.strip()}"
-        lines = proc.stdout.splitlines()[:max_results]
-        return "\n".join(lines) if lines else "(no matches)"
-
-    matches: list[str] = []
-    for p in root.rglob("*"):
-        if not p.is_file():
-            continue
-        try:
-            text = p.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue
-        for line_no, line in enumerate(text.splitlines(), start=1):
-            if pattern in line:
-                matches.append(f"{p.relative_to(ctx.cwd)}:{line_no}:{line}")
-                if len(matches) >= max_results:
-                    return "\n".join(matches)
-    return "\n".join(matches) if matches else "(no matches)"
-
-
-def _exec_command(ctx: ToolContext, args: dict[str, Any]) -> str:
-    command = str(args["command"])
-    timeout = max(1, min(int(args.get("timeout_sec", 120)), 600))
-    proc = subprocess.run(
-        command, shell=True, cwd=ctx.cwd, capture_output=True, text=True, timeout=timeout, check=False
-    )
-    output = ((proc.stdout or "") + (proc.stderr or "")).strip()
-    if len(output) > 6000:
-        output = output[:6000] + "\n... (truncated)"
-    return f"exit_code={proc.returncode}\n{output}"
-
-
 # ── Registry factory ──────────────────────────────────────────────
 
 
 def create_default_tools(context: ToolContext) -> ToolRegistry:
-    """Build the 6 built-in coding tools.
+    """Build the 3 built-in coding tools.
 
     Tool descriptions and schemas are kept minimal to fit within MiniMind's
     limited context window (~768 tokens at SFT training time).
@@ -249,20 +191,6 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
     ))
 
     registry.register(Tool(
-        name="grep_files",
-        description="在文件中搜索文本",
-        parameters={
-            "type": "object",
-            "properties": {
-                "pattern": {"type": "string", "description": "搜索文本"},
-                "path": {"type": "string", "description": "搜索目录"},
-            },
-            "required": ["pattern"],
-        },
-        handler=_grep_files,
-    ))
-
-    registry.register(Tool(
         name="write_file",
         description="写入文件内容",
         parameters={
@@ -274,36 +202,6 @@ def create_default_tools(context: ToolContext) -> ToolRegistry:
             "required": ["path", "content"],
         },
         handler=_write_file,
-        mutating=True,
-    ))
-
-    registry.register(Tool(
-        name="replace_in_file",
-        description="替换文件中的文本",
-        parameters={
-            "type": "object",
-            "properties": {
-                "path": {"type": "string", "description": "文件路径"},
-                "old": {"type": "string", "description": "要替换的原文"},
-                "new": {"type": "string", "description": "替换后的文本"},
-            },
-            "required": ["path", "old", "new"],
-        },
-        handler=_replace_in_file,
-        mutating=True,
-    ))
-
-    registry.register(Tool(
-        name="exec_command",
-        description="执行Shell命令",
-        parameters={
-            "type": "object",
-            "properties": {
-                "command": {"type": "string", "description": "命令"},
-            },
-            "required": ["command"],
-        },
-        handler=_exec_command,
         mutating=True,
     ))
 

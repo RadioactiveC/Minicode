@@ -1,0 +1,158 @@
+{
+  "model": "BASE (full_sft, before LoRA)",
+  "weight": "/Users/henry/Desktop/mini-mind/minimind/out/full_sft_768.pth",
+  "summary": {
+    "total": 15,
+    "passed": 6,
+    "accuracy": 40.0,
+    "by_category": {
+      "list_files": {
+        "passed": 3,
+        "total": 3,
+        "accuracy": 100.0
+      },
+      "read_file": {
+        "passed": 0,
+        "total": 3,
+        "accuracy": 0.0
+      },
+      "write_file": {
+        "passed": 0,
+        "total": 3,
+        "accuracy": 0.0
+      },
+      "no_tool": {
+        "passed": 3,
+        "total": 3,
+        "accuracy": 100.0
+      },
+      "edge": {
+        "passed": 0,
+        "total": 3,
+        "accuracy": 0.0
+      }
+    }
+  },
+  "cases": [
+    {
+      "prompt": "看看当前目录有什么文件",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"当前目录\", \"required\": \"directory\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"当前目录\", \"required\": \"directory\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "列出src目录下的内容",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"src/directory\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"src/directory\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Show me the project structure",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"simple_project\", \"required\": \"properties\", \"descri)",
+      "raw_response": "I'll help you with the project structure. Let me start by getting the details of the project structure.\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"simple_project\", \"required\": \"properties\", \"description\": \"project structure with properties for projects, projects, and resources.\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "读一下README.md",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "I understand your request and will need to convert the file to a JSON format. Let me proceed with the formatting.\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"README.md\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我看看main.py里写了什么",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "当然，我很乐意帮助你。不过，由于你没有提供具体的main.py文件内容，我将创建一个示例main.py并列出一些可能的文件和子目录。\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"main.py\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Read the config.yaml file",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong: no tool call (expected read_file)",
+      "raw_response": "I'm sorry, but I can't access the config.yaml file directly. However, I can help you understand how to read the config.yaml file. Could you please provide the path to the config.yaml file?"
+    },
+    {
+      "prompt": "帮我创建一个hello.py，里面打印hello world",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected write_file)",
+      "raw_response": "我来帮你创建一个hello.py文件，并添加打印hello world的功能。\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"hello.py\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "写一个简单的README",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected write_file)",
+      "raw_response": "I'll help you create a simple README file. Let me start by generating the necessary files.\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"/path/to/your/file.txt\", \"required\": \"flatten\", \"string\": \"your_file.txt\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Create a .gitignore for Python",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong: no tool call (expected write_file)",
+      "raw_response": "I'll create a .gitignore for Python file. First, I'll create a file called `.gitignore` with the path to your Python file. Then, I'll write the .gitignore file to read the file.\n</think>\n\nI'll create a .gitignore file for Python file. First, I'll create a file called `.gitignore` with the path to your Python file. Then, I'll write the .gitignore file to read the file.\n\n```\npython\nimport os\nimport path\n\n# Create a .gitignore file\nos.makedirs(\"python.gitignore\", exist_ok=True)\n\n# Read the file\nwith open('.gitignore', 'r') as file:\n    # Read the file\n    file.write(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))\n```\n\n**Explanation:**\n- `os.makedirs(\"python."
+    },
+    {
+      "prompt": "什么是Python的装饰器？",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "装饰器是一种特殊类型的函数，用于在不修改原始函数代码的情况下，为函数添加额外的功能。装饰器允许我们在不修改原始函数代码的情况下，为函数添加新的功能。装饰器本质上是一个接受函数作为参数的函数，返回一个新的函数，这个新函数在原始函数中被调用。\n\n装饰器的语法如下：\n\n```python\ndef my_decorator(func):\n    def wrapper(*args, **kwargs):\n        # 定义一个函数，接受一个参数并返回一个新的函数\n        result = func(*args, **kwargs)\n        return result\n    return wrapper\n```\n\n或者，如果要使用装饰器，可以这样写：\n\n```python\n@my_decorator\ndef my_decorator(func):\n    def wrapper(*args, **kwargs):\n        # 定义一个函数，接受一个参数并返回一个新的函数\n        result = func(*args, **kwargs)\n        return result\n    return wrapper\n```\n\n或者，如果要使用"
+    },
+    {
+      "prompt": "你好",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "Hello! How can I assist you today?"
+    },
+    {
+      "prompt": "How to use a list comprehension?",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "To use a list comprehension to create a new file, you can use the `files` function. Here's how you can do it:\n\n```python\nfiles = [\"apple\", \"banana\", \"cherry\", \"date\", \"elderberry\"]\n```\n\nThis will create a new file named `files.files` with the following content:\n\n```\napple,banana,cherry,date,elderberry\n```\n\nYou can then access the files by using the `files` function. For example:\n\n```python\nprint(files[0])  # Output: apple\nprint(files[1])  # Output: banana\nprint(files[2])  # Output: cherry\nprint(files[3])  # Output: date\nprint(files[4])  # Output: cherry\n```\n\nThe `files` function takes a list of files as input and returns a new list with the files in the same order as the original list."
+    },
+    {
+      "prompt": "看下config目录",
+      "expect_tool": "list_files",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong: no tool call (expected list_files)",
+      "raw_response": "I'm sorry, but I can't access the configuration file directly. However, I can help you find the configuration file or provide you with the file content. Let me know how I can assist you further."
+    },
+    {
+      "prompt": "帮我看看不存在的文件abc.txt",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"abc.txt\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "requirements.txt里有哪些依赖？",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "I can help with that. Please provide the specific files you'd like me to analyze.\n</think>\n\nI'll help you with that. Please provide the files you'd like me to analyze.\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"/path/to/your/files\"}}\n</tool_call>"
+    }
+  ]
+}

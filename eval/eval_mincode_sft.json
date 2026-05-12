@@ -1,0 +1,158 @@
+{
+  "model": "LoRA-merged (mincode_sft)",
+  "weight": "/Users/henry/Desktop/mini-mind/mincode/out/mincode_sft_768.pth",
+  "summary": {
+    "total": 15,
+    "passed": 8,
+    "accuracy": 53.3,
+    "by_category": {
+      "list_files": {
+        "passed": 3,
+        "total": 3,
+        "accuracy": 100.0
+      },
+      "read_file": {
+        "passed": 2,
+        "total": 3,
+        "accuracy": 66.7
+      },
+      "write_file": {
+        "passed": 0,
+        "total": 3,
+        "accuracy": 0.0
+      },
+      "no_tool": {
+        "passed": 1,
+        "total": 3,
+        "accuracy": 33.3
+      },
+      "edge": {
+        "passed": 2,
+        "total": 3,
+        "accuracy": 66.7
+      }
+    }
+  },
+  "cases": [
+    {
+      "prompt": "看看当前目录有什么文件",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \".\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \".\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "列出src目录下的内容",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"src\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"src\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Show me the project structure",
+      "expect_tool": "list_files",
+      "category": "list_files",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \".\\n\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \".\\n\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "读一下README.md",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"README.md\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"README.md\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我看看main.py里写了什么",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": false,
+      "details": "wrong tool: write_file (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"main.py\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Read the config.yaml file",
+      "expect_tool": "read_file",
+      "category": "read_file",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"config.yaml\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"config.yaml\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我创建一个hello.py，里面打印hello world",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong: no tool call (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"write_file\", \"arguments\": {\"path\": \"hello.py\", \"content\": \"print(\"Hello, World!\")\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "写一个简单的README",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong tool: read_file (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"README\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "Create a .gitignore for Python",
+      "expect_tool": "write_file",
+      "category": "write_file",
+      "passed": false,
+      "details": "wrong tool: list_files (expected write_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \".gitignore\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "什么是Python的装饰器？",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": true,
+      "details": "correct: no tool call",
+      "raw_response": "装饰器是一种特殊类型的函数，用于修改其他函数的行为。它类似于列表推导式，但更灵活，可读性更强。"
+    },
+    {
+      "prompt": "你好",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": false,
+      "details": "wrong: called ['list_files'] (expected none)",
+      "raw_response": "你好！我来帮你读取文件内容。\n<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"file_files.txt\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "How to use a list comprehension?",
+      "expect_tool": null,
+      "category": "no_tool",
+      "passed": false,
+      "details": "wrong: called ['list_files'] (expected none)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \".\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "看下config目录",
+      "expect_tool": "list_files",
+      "category": "edge",
+      "passed": true,
+      "details": "correct: list_files({\"path\": \"config\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"config\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "帮我看看不存在的文件abc.txt",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": false,
+      "details": "wrong tool: list_files (expected read_file)",
+      "raw_response": "<tool_call>\n{\"name\": \"list_files\", \"arguments\": {\"path\": \"abc.txt\"}}\n</tool_call>"
+    },
+    {
+      "prompt": "requirements.txt里有哪些依赖？",
+      "expect_tool": "read_file",
+      "category": "edge",
+      "passed": true,
+      "details": "correct: read_file({\"path\": \"requirements.txt\"})",
+      "raw_response": "<tool_call>\n{\"name\": \"read_file\", \"arguments\": {\"path\": \"requirements.txt\"}}\n</tool_call>"
+    }
+  ]
+}
