@@ -1,8 +1,8 @@
-# MinCode
+# Minicode
 
 **从零训练一个会用工具的编程 Agent — 64M 参数，纯 CPU，SFT + RL 全流程可复现。**
 
-MinCode 将 [MiniMind](https://github.com/jingyaogong/minimind)（64M 小语言模型）接入简化版 [ApeCode](https://github.com/anthropics/apecode) Agent 框架，构建了一个完整的 tool-calling 训练管线：数据生成 → LoRA 微调 → GRPO 强化学习，全部在消费级硬件上完成。
+Minicode 将 [MiniMind](https://github.com/jingyaogong/minimind)（64M 小语言模型）接入简化版 [ApeCode](https://github.com/ApeCodeAI/apecode) Agent 框架，构建了一个完整的 tool-calling 训练管线：数据生成 → LoRA 微调 → GRPO 强化学习，全部在消费级硬件上完成。
 
 ## 核心成果
 
@@ -34,6 +34,31 @@ CLI (cli.py) ──▶ Agent Loop (agent.py)
 ```
 
 **模型规格**: 64M 参数 | vocab=6400 | hidden=768 | 8 layers | max_seq_len=768
+
+### MiniMind ↔ ApeCode 通讯桥梁
+
+MiniMind 和 ApeCode 原本是两个独立项目。Minicode 的第一个工程挑战是打通二者的通讯链路：
+
+```
+┌──── Minicode Agent 进程 ────┐          ┌──── MiniMind 服务器进程 ────┐
+│                              │          │                             │
+│  Agent.run()                 │          │  FastAPI (uvicorn :8998)    │
+│    │                         │          │    │                        │
+│    ├─ 组装 messages (dict)    │          │    ├─ apply_chat_template() │
+│    ├─ tools → JSON schema    │   HTTP   │    ├─ model.generate()      │
+│    ▼                         │   POST   │    ├─ parse_response()      │
+│  openai.OpenAI(base_url)     │─────────▶│    │  提取 tool_calls       │
+│  client.chat.completions     │◀─────────│    └─ 返回标准 JSON         │
+│    │                         │   JSON   │                             │
+│    ├─ 解析 tool_calls        │          └─────────────────────────────┘
+│    ├─ 执行工具 → 追加结果     │
+│    └─ 循环直到无 tool_call   │
+└──────────────────────────────┘
+```
+
+**关键设计**：MiniMind 通过 `<tool_call>{"name":..., "arguments":...}</tool_call>` XML 标签输出工具调用，其 API 服务器将其解析为 OpenAI 兼容的结构化 `tool_calls` 对象。Minicode Agent 侧使用标准 OpenAI SDK 通信，对底层模型完全透明。
+
+> 详细的通讯机制分析见 `docs/communication-deep-dive.md`，HTTP 桥梁的逐层拆解见 `docs/http-bridge-guide.md`。
 
 ## 项目亮点
 
@@ -102,8 +127,7 @@ mincode/
 ├── docs/                  # 各阶段技术文档与日志
 │   ├── progress.md            # 全项目进展记录
 │   └── phase3-rl-log.md      # RL 训练详细日志
-├── out/                   # 模型权重（gitignored，需自行训练）
-└── CLAUDE.md              # 项目内部开发文档
+└── out/                   # 模型权重（gitignored，需自行训练）
 ```
 
 ## 快速开始
@@ -134,7 +158,7 @@ python scripts/eval_toolcall.py --weight mincode_v1_rl2
 # 启动 MiniMind API 服务（在 ../minimind/ 目录）
 python scripts/serve_openai_api.py
 
-# 运行 MinCode agent
+# 运行 Minicode agent
 python -m mincode
 ```
 
@@ -167,7 +191,7 @@ Base (40%) ──SFT──▶ v1 (62.5%) ──RL──▶ v1_rl2 (80.0%)  ← b
 ## 致谢
 
 - [MiniMind](https://github.com/jingyaogong/minimind) — 64M 小语言模型，提供 base 模型与 GRPO 训练框架
-- [ApeCode](https://github.com/anthropics/apecode) — Anthropic 的终端编程 Agent，提供 harness 架构参考
+- [ApeCode](https://github.com/ApeCodeAI/apecode) — 终端编程 Agent，提供 harness 架构参考
 
 ## License
 

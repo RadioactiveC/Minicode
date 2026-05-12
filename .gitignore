@@ -17,3 +17,6 @@ build/
 
 # Obsidian
 docs/.obsidian/
+
+# Internal dev doc
+CLAUDE.md
