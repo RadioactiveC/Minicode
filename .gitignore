@@ -7,3 +7,13 @@ build/
 *.pth
 .ruff_cache/
 .pytest_cache/
+.env
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+
+# Obsidian
+docs/.obsidian/

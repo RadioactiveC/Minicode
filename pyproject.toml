@@ -2,7 +2,7 @@
 name = "mincode"
 version = "0.1.0"
 description = "MiniMind + ApeCode: a small coding agent you can train from scratch"
-readme = "CLAUDE.md"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "openai>=1.0.0",
