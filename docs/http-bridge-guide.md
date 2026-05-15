@@ -68,19 +68,19 @@
 
 ## 2. 核心依赖库速览
 
-| 库 | 作用 | 类比 |
-|---|---|---|
-| **uvicorn** | ASGI HTTP 服务器，监听端口、处理网络连接 | 相当于 Nginx/Apache，但专为 Python 异步框架设计 |
-| **FastAPI** | Web 框架，定义路由（URL → 函数的映射）、自动序列化 JSON | 相当于 Flask，但更现代，自带类型校验 |
-| **Pydantic** | 数据模型校验，定义请求/响应的字段和类型 | 相当于 dataclass + 自动 JSON 校验 |
-| **transformers** | HuggingFace 的模型加载库，提供 tokenizer 和 model | 你可能已经熟悉 |
-| **torch** | PyTorch，模型推理引擎 | 你可能已经熟悉 |
+| 库                | 作用                                      | 类比                                 |
+| ---------------- | --------------------------------------- | ---------------------------------- |
+| **uvicorn**      | ASGI HTTP 服务器，监听端口、处理网络连接               | 相当于 Nginx/Apache，但专为 Python 异步框架设计 |
+| **FastAPI**      | Web 框架，定义路由（URL → 函数的映射）、自动序列化 JSON     | 相当于 Flask，但更现代，自带类型校验              |
+| **Pydantic**     | 数据模型校验，定义请求/响应的字段和类型                    | 相当于 dataclass + 自动 JSON 校验         |
+| **transformers** | HuggingFace 的模型加载库，提供 tokenizer 和 model | 你可能已经熟悉                            |
+| **torch**        | PyTorch，模型推理引擎                          | 你可能已经熟悉                            |
 
 它们的关系是**逐层嵌套**的：
 
 ```
 uvicorn（网络层）
-  └── FastAPI（路由层）
+  └── FastAPI（ 层）
         └── Pydantic（数据校验层）
               └── transformers + torch（模型推理层）
 ```
@@ -137,13 +137,13 @@ async def chat_completions(request: ChatRequest):  # 处理函数
 
 ### 拆解
 
-| 元素 | 含义 |
-|---|---|
-| `app = FastAPI()` | 创建一个 Web 应用实例。uvicorn 拿到的 `app` 就是它。 |
-| `@app.post("/v1/chat/completions")` | 装饰器，意思是「当收到 `POST /v1/chat/completions` 请求时，调用下面这个函数」 |
-| `async def` | 异步函数。FastAPI 支持 async/await，但我们的模型推理是同步阻塞的（CPU 计算），所以实际上并没有异步优势 |
-| `request: ChatRequest` | 参数类型标注。FastAPI 看到类型是 Pydantic 模型后，会自动从 HTTP 请求体中解析 JSON 并校验 |
-| `return {...}` | 返回一个 dict，FastAPI 自动将其序列化为 JSON 响应 |
+| 元素                                  | 含义                                                              |
+| ----------------------------------- | --------------------------------------------------------------- |
+| `app = FastAPI()`                   | 创建一个 Web 应用实例。uvicorn 拿到的 `app` 就是它。                            |
+| `@app.post("/v1/chat/completions")` | 装饰器，意思是「当收到 `POST /v1/chat/completions` 请求时，调用下面这个函数」           |
+| `async def`                         | 异步函数。FastAPI 支持 async/await，但我们的模型推理是同步阻塞的（CPU 计算），所以实际上并没有异步优势 |
+| `request: ChatRequest`              | 参数类型标注。FastAPI 看到类型是 Pydantic 模型后，会自动从 HTTP 请求体中解析 JSON 并校验     |
+| `return {...}`                      | 返回一个 dict，FastAPI 自动将其序列化为 JSON 响应                              |
 
 ### 为什么路径是 `/v1/chat/completions`
 

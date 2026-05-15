@@ -107,13 +107,31 @@ Tool-calling max: +2.0 + 1.0 + 1.0 + 1.0 = **+5.0**; No-tool max: +2.0 + 0.5 = *
 - KL drifted negative throughout (expected with full-param RL)
 - 119 samples (3x the original 39) was the key factor — more diverse prompts prevented overfitting
 
-### Run 3: v2 RL (pending)
+### Run 3: v2 RL (completed)
 
 - **Input weight:** `out/mincode_v2_768.pth` (v2 SFT, 47.5%)
 - **Output weight:** `out/mincode_v2_rl_768.pth`
+- **Data:** `dataset/mincode_rl_combined.jsonl` (119 prompts)
 - **Command:** `python scripts/train_rl.py --from_weight mincode_v2 --output_name mincode_v2_rl --data_path dataset/mincode_rl_combined.jsonl --debug_mode`
-- **Status:** Not started
-- **Results:** TBD
+- **Status:** Completed
+- **Eval result:** 25/40 = **62.5%** (+15% over v2 SFT baseline)
+
+| Category | v2 SFT | v2 RL | Delta |
+|----------|--------|-------|-------|
+| list_files | ? | 6/8 (75%) | — |
+| read_file | ? | 2/8 (25%) | — |
+| write_file | ? | 7/8 (88%) | — |
+| no_tool | ? | 7/8 (88%) | — |
+| edge | ? | 3/8 (38%) | — |
+| **Total** | **47.5%** | **62.5%** | **+15%** |
+
+**Observations:**
+- Reward trended upward: epoch 1 avg ~1.5, epoch 2 avg ~2.0, epoch 3 avg ~2.3
+- list_files learned well (75%), write_file strong (88%), no_tool improved to 88%
+- read_file severely degraded (25%) — model confused read_file with list_files and write_file
+- "再见" still triggers false tool call (same as v1 RL)
+- v2 RL (62.5%) matches v1 SFT (62.5%) but is far below v1 RL2 (80%)
+- **Key conclusion:** RL can compensate for weaker SFT (+15%), but cannot fully overcome a bad SFT foundation. v1 SFT (62.5%) + RL → 80%, while v2 SFT (47.5%) + RL → 62.5%. SFT quality is the dominant factor.
 
 ## Pre-training Review & Smoke Test
 
