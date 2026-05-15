@@ -39,7 +39,7 @@ CLI (cli.py) ──▶ Agent Loop (agent.py)
 
 ### MiniMind ↔ ApeCode 通讯桥梁
 
-MiniMind 和 ApeCode 原本是两个独立项目。Minicode 的第一个工程挑战是打通二者的通讯链路——核心难点在于：模型只能输入和输出纯文本 token 序列，但 Agent 需要结构化的工具调用对象。一次完整的工具调用经历 **5 次格式变换**：
+MiniMind 和 ApeCode 原本是两个独立项目。Minicode 的第一个工程挑战是打通二者的通讯链路——核心难点在于：模型只能输入和输出纯文本 token 序列，但 Agent 需要结构化的工具调用对象。
 
 <p align="center">
   <img src="docs/communication-bridge.svg" width="800" alt="MiniMind ↔ ApeCode 通讯桥梁：5 次格式变换"/>
