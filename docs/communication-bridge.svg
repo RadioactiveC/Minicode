@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 510" font-family="'SF Pro Display', 'PingFang SC', 'Noto Sans SC', -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="agentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1"/>
+      <stop offset="100%" style="stop-color:#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="serverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669"/>
+      <stop offset="100%" style="stop-color:#047857"/>
+    </linearGradient>
+    <linearGradient id="modelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EA580C"/>
+      <stop offset="100%" style="stop-color:#C2410C"/>
+    </linearGradient>
+    <filter id="s" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="510" fill="#FAFBFC"/>
+
+  <!-- Title -->
+  <text x="410" y="30" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" letter-spacing="0.5">MiniMind ↔ ApeCode 通讯桥梁</text>
+  <text x="410" y="50" text-anchor="middle" font-size="11.5" fill="#94A3B8">一次工具调用的 5 次格式变换</text>
+
+  <!-- ===== Row 1 ===== -->
+
+  <!-- Stage 1: top-left, box x=40..280, y=72..192 -->
+  <g transform="translate(40, 72)">
+    <rect width="240" height="120" rx="10" fill="white" stroke="#E0E7FF" stroke-width="1.2" filter="url(#s)"/>
+    <rect width="240" height="30" rx="10" fill="url(#agentGrad)"/>
+    <rect y="20" width="240" height="10" fill="url(#agentGrad)"/>
+    <text x="14" y="20" font-size="12" font-weight="700" fill="white">① 结构化请求</text>
+    <text x="210" y="20" font-size="9" fill="#C7D2FE">Agent</text>
+    <text x="14" y="50" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#6366F1">messages:</text>
+    <text x="22" y="66" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">{user: "列出src目录"}</text>
+    <text x="14" y="86" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#6366F1">tools:</text>
+    <text x="22" y="102" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">[list_files, read_file, ...]</text>
+  </g>
+
+  <!-- Arrow ①→② : horizontal right, line at y=132 -->
+  <line x1="284" y1="132" x2="440" y2="132" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="362" y="112" text-anchor="middle" font-size="9.5" fill="#94A3B8" font-weight="500">POST /v1/chat/completions</text>
+  <text x="362" y="126" text-anchor="middle" font-size="9" fill="#B0B8C4">localhost:8998</text>
+  <text x="362" y="150" text-anchor="middle" font-size="9" fill="#B0B8C4">OpenAI SDK 自动序列化</text>
+
+  <!-- Stage 2: top-right, box x=448..688, y=72..192 -->
+  <g transform="translate(448, 72)">
+    <rect width="240" height="120" rx="10" fill="white" stroke="#D1FAE5" stroke-width="1.2" filter="url(#s)"/>
+    <rect width="240" height="30" rx="10" fill="url(#serverGrad)"/>
+    <rect y="20" width="240" height="10" fill="url(#serverGrad)"/>
+    <text x="14" y="20" font-size="12" font-weight="700" fill="white">② 纯文本 Prompt</text>
+    <text x="204" y="20" font-size="9" fill="#A7F3D0">Server</text>
+    <text x="14" y="50" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#059669">&lt;|im_start|&gt;system</text>
+    <text x="14" y="66" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">你是MinCode编程助手。</text>
+    <text x="14" y="82" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#059669">&lt;tools&gt;...&lt;/tools&gt;</text>
+    <text x="14" y="98" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#059669">&lt;|im_start|&gt;user</text>
+    <text x="14" y="112" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">列出src目录</text>
+  </g>
+
+  <!-- Arrow ②→③④ : vertical down, x=568 -->
+  <line x1="568" y1="196" x2="568" y2="276" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="584" y="240" font-size="9" fill="#B0B8C4">chat_template()</text>
+
+  <!-- ===== Row 2 ===== -->
+
+  <!-- Stage 3+4: bottom-right, box x=448..688, y=286..406 -->
+  <g transform="translate(448, 286)">
+    <rect width="240" height="120" rx="10" fill="white" stroke="#FFEDD5" stroke-width="1.2" filter="url(#s)"/>
+    <rect width="240" height="30" rx="10" fill="url(#modelGrad)"/>
+    <rect y="20" width="240" height="10" fill="url(#modelGrad)"/>
+    <text x="14" y="20" font-size="12" font-weight="700" fill="white">③④ 模型推理 → 输出</text>
+    <text x="204" y="20" font-size="9" fill="#FDBA74">Model</text>
+    <text x="14" y="50" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">encode → generate → decode</text>
+    <rect x="14" y="60" width="212" height="46" rx="5" fill="#FFF7ED" stroke="#FDBA74" stroke-width="0.8"/>
+    <text x="22" y="78" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#EA580C">&lt;tool_call&gt;</text>
+    <text x="22" y="96" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">{"name":"list_files",...}</text>
+  </g>
+
+  <!-- Arrow ③④→⑤ : horizontal left, line at y=346 -->
+  <line x1="444" y1="346" x2="284" y2="346" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="364" y="326" text-anchor="middle" font-size="9.5" fill="#94A3B8" font-weight="500">HTTP 200 JSON</text>
+  <text x="364" y="340" text-anchor="middle" font-size="9" fill="#B0B8C4">localhost:8998</text>
+  <text x="364" y="364" text-anchor="middle" font-size="9" fill="#B0B8C4">parse_response() → 结构化</text>
+
+  <!-- Stage 5: bottom-left, box x=40..280, y=286..406 -->
+  <g transform="translate(40, 286)">
+    <rect width="240" height="120" rx="10" fill="white" stroke="#E0E7FF" stroke-width="1.2" filter="url(#s)"/>
+    <rect width="240" height="30" rx="10" fill="url(#agentGrad)"/>
+    <rect y="20" width="240" height="10" fill="url(#agentGrad)"/>
+    <text x="14" y="20" font-size="12" font-weight="700" fill="white">⑤ 解析 → 执行</text>
+    <text x="210" y="20" font-size="9" fill="#C7D2FE">Agent</text>
+    <text x="14" y="50" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#6366F1">tool_calls:</text>
+    <text x="22" y="66" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B">{name: "list_files",</text>
+    <text x="22" y="82" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#64748B"> arguments: {path: "src"}}</text>
+    <text x="14" y="106" font-size="10.5" fill="#6366F1" font-weight="500">→ 执行工具 → 追加结果 → 下一轮</text>
+  </g>
+
+  <!-- ===== Bottom: 3 Key Points ===== -->
+  <g transform="translate(40, 430)">
+    <rect width="724" height="56" rx="8" fill="white" stroke="#E2E8F0" stroke-width="1" filter="url(#s)"/>
+
+    <circle cx="30" cy="28" r="5" fill="#6366F1" opacity="0.8"/>
+    <text x="42" y="26" font-size="10.5" font-weight="600" fill="#4338CA">协议对齐</text>
+    <text x="42" y="40" font-size="9.5" fill="#64748B">OpenAI Chat Completions 格式</text>
+
+    <line x1="240" y1="10" x2="240" y2="46" stroke="#E2E8F0" stroke-width="1"/>
+
+    <circle cx="266" cy="28" r="5" fill="#059669" opacity="0.8"/>
+    <text x="278" y="26" font-size="10.5" font-weight="600" fill="#047857">Chat Template</text>
+    <text x="278" y="40" font-size="9.5" fill="#64748B">Jinja2 渲染结构化 → 纯文本</text>
+
+    <line x1="484" y1="10" x2="484" y2="46" stroke="#E2E8F0" stroke-width="1"/>
+
+    <circle cx="510" cy="28" r="5" fill="#EA580C" opacity="0.8"/>
+    <text x="522" y="26" font-size="10.5" font-weight="600" fill="#C2410C">XML 特殊 Token</text>
+    <text x="522" y="40" font-size="9.5" fill="#64748B">&lt;tool_call&gt; = 单 token 标记边界</text>
+  </g>
+</svg>

@@ -41,54 +41,9 @@ CLI (cli.py) ──▶ Agent Loop (agent.py)
 
 MiniMind 和 ApeCode 原本是两个独立项目。Minicode 的第一个工程挑战是打通二者的通讯链路——核心难点在于：模型只能输入和输出纯文本 token 序列，但 Agent 需要结构化的工具调用对象。一次完整的工具调用经历 **5 次格式变换**：
 
-```
-               Minicode Agent 进程                          MiniMind 服务器进程
-              ─────────────────────                        ────────────────────
-
-  ① Python dict                                    ② 纯文本 prompt
-  ┌──────────────────────────┐                      ┌──────────────────────────────────┐
-  │ messages: [              │    HTTP POST          │ <|im_start|>system               │
-  │   {role: "user",         │    /v1/chat/          │ 你是MinCode编程助手。             │
-  │    content: "列出src目录"}│    completions        │ <tools>                          │
-  │ ]                        │ ──────────────────►   │ {"name":"list_files",...}         │
-  │ tools: [                 │   OpenAI SDK          │ </tools>                         │
-  │   {name: "list_files"},  │   自动序列化 JSON      │ <|im_end|>                       │
-  │   {name: "read_file"},   │                       │ <|im_start|>user                 │
-  │   {name: "write_file"}   │                       │ 列出src目录<|im_end|>             │
-  │ ]                        │                       │ <|im_start|>assistant            │
-  └──────────────────────────┘                       └──────────────┬───────────────────┘
-                                                                    │ apply_chat_template()
-                                                                    │ 将 messages + tools
-                                                                    │ 渲染为模型可读的格式
-                                                                    ▼
-                                                     ③ Token IDs → 模型推理 → 解码
-                                                     ┌──────────────────────────────────┐
-                                                     │ tokenizer.encode() → [1,67,...]  │
-                                                     │ model.generate()   → 自回归生成    │
-                                                     │ tokenizer.decode() →              │
-                                                     │                                  │
-                                                     │ ④ 模型原始输出（纯文本）：          │
-                                                     │ <tool_call>                       │
-                                                     │ {"name":"list_files",             │
-                                                     │  "arguments":{"path":"src"}}      │
-                                                     │ </tool_call>                      │
-                                                     └──────────────┬───────────────────┘
-                                                                    │ parse_response()
-                                                                    │ 正则提取 <tool_call>
-                                                                    │ 转为结构化 JSON
-                                                                    ▼
-  ⑤ Python dict                                      HTTP 200 JSON
-  ┌──────────────────────────┐                       ┌──────────────────────────────────┐
-  │ tool_calls: [{           │    OpenAI SDK          │ choices: [{message: {            │
-  │   name: "list_files",    │ ◄──────────────────   │   tool_calls: [{                 │
-  │   arguments: {path:"src"}│   自动反序列化          │     function: {                  │
-  │ }]                       │                       │       name: "list_files",        │
-  │                          │                       │       arguments: "{\"path\":...}" │
-  │ → 执行工具               │                       │ }}]}}]                           │
-  │ → 追加结果到 messages     │                       └──────────────────────────────────┘
-  │ → 再次调用模型（第二轮）   │
-  └──────────────────────────┘
-```
+<p align="center">
+  <img src="docs/communication-bridge.svg" width="800" alt="MiniMind ↔ ApeCode 通讯桥梁：5 次格式变换"/>
+</p>
 
 **设计要点**：
 
