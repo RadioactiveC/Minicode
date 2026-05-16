@@ -18,5 +18,8 @@ build/
 # Obsidian
 docs/.obsidian/
 
+# Docs (keep SVG for README, ignore markdown docs)
+docs/*.md
+
 # Internal dev doc
 CLAUDE.md
